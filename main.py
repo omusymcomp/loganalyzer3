@@ -38,7 +38,7 @@ def doAnalyze(filename: str, args:argparse.Namespace) -> None:
 
     # ------ calculation ------ #
 
-    calc.analyzeLog( args, wm, sp, feature )
+    calc.analyzeLog( filename, args, wm, sp, feature )
 
     #pass_probability = pb.passProbability( ball, kick, situation, tackle, player_state_l, player_state_r, team )
 
