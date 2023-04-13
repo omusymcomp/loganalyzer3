@@ -21,8 +21,13 @@ from extraction import get_kick as gk
 from lib import state
 from lib import la_class
 
+import re
+import csv
+import copy
+import pandas as pd
 
-def analyzeLog(args: argparse.Namespace, wm: list, sp: la_class.ServerParam, feat: la_class.Feature) -> None:
+
+def analyzeLog(filename: str, args: argparse.Namespace, wm: list, sp: la_class.ServerParam, feat: la_class.Feature) -> None:
     # write index
     fname: cython.str = '{}{}.csv'.format(args.output_dir, feat.team_point[0])
     if not os.path.exists(fname):
@@ -30,6 +35,11 @@ def analyzeLog(args: argparse.Namespace, wm: list, sp: la_class.ServerParam, fea
 
     ol.calcOffsideLine(args, wm)
 
+    domListL = []
+    domListR = []
+    kickList = []
+    passList = []
+    dribbleList = []
     for cycle in range(args.start_cycle, args.end_cycle):
 
         relative_cycle: cython.int = cycle - args.start_cycle
@@ -75,15 +85,19 @@ def analyzeLog(args: argparse.Namespace, wm: list, sp: la_class.ServerParam, fea
         if (wm[relative_cycle].dominate_side == "l"
                 and wm[relative_cycle].referee.playmode == "play_on"):
             if feat.target_team == "l":
+                domListL.append(relative_cycle)
                 feat.our_dominate_time += 1
             if feat.target_team == "r":
+                domListR.append(relative_cycle)
                 feat.opp_dominate_time += 1
 
         if (wm[relative_cycle].dominate_side == "r"
                 and wm[relative_cycle].referee.playmode == "play_on"):
             if feat.target_team == "r":
+                domListL.append(relative_cycle)
                 feat.our_dominate_time += 1
             if feat.target_team == "l":
+                domListR.append(relative_cycle)
                 feat.opp_dominate_time += 1
 
         try:
@@ -127,12 +141,15 @@ def analyzeLog(args: argparse.Namespace, wm: list, sp: la_class.ServerParam, fea
                 feat.our_shoot += 1
             elif shoot.isOppShoot(wm[relative_cycle + 1], sp, cycle, feat.target_team):
                 feat.opp_shoot += 1
+            copyFeatures = copy.deepcopy(feat)
             direction: cython.str = pc.countKick(wm,  relative_cycle, feat)
             pc.countPass(wm, relative_cycle, direction, feat)
             tp.countThroughPass(wm, relative_cycle, feat)
             dc.countDribble(wm, relative_cycle, feat)
             feat.our_penalty_area += ks.getSequence(wm, sp, relative_cycle, feat,
                                                     until_penalty_area=True, kick_dist_thr=0.0)
+
+            cycleGet(feat, copyFeatures, cycle, kickList, passList, dribbleList)
 
         # find disconnected player
         l_disconnected_player: cython.int = 0
@@ -156,7 +173,31 @@ def analyzeLog(args: argparse.Namespace, wm: list, sp: la_class.ServerParam, fea
                 feat.outputIndexForIR(fname_for_integrate_result)
             feat.outputIntegrateResult(fname_for_integrate_result)
 
-    feat.outputResult( fname )
+    # print(f"Kick[{len(kickList)}]:{kickList}")
+    # print(f"Pass[{len(passList)}]:{passList}")
+    # print(f"Dribble[{len(dribbleList)}]:{dribbleList}")
+    print(f"Kick[{len(kickList)}], Pass[{len(passList)}], Dribble[{len(dribbleList)}]")
+
+    maxLen = max(len(domListL), len(domListR), len(kickList), len(passList), len(dribbleList))
+    #print(len(domListL), len(domListR))
+    domListL += [0] * (maxLen - len(domListL))
+    domListR += [0] * (maxLen - len(domListR))
+    kickList += [0] * (maxLen - len(kickList))
+    passList += [0] * (maxLen - len(passList))
+    dribbleList += [0] * (maxLen - len(dribbleList))
+    #print(f"L:{domListL}\nR:{domListR}")
+    domList = pd.DataFrame({'domL': domListL, 'domR': domListR, 'kickL': kickList, 'passL': passList, 'driibleL': dribbleList})
+    # print(domList)
+    print(f"F1:{filename}")
+    filename = re.sub(".rcg.*", "", filename)
+    #print(f"F2:{filename}")
+    filename = re.sub(".*../", "", filename)
+    #print(f"F3:{filename}")
+    domFile = f"{args.output_dir}{filename}_cycles.csv"
+    print(f"domFile={domFile}")
+    domList.to_csv(domFile, index=None)
+
+    feat.outputResult( filename, fname )
     # ks.saveKickSequence( feat, args.output_dir, outputKickedCycle=True )
     # kd.saveKickDistribution( feat, args.output_dir, degree_range=90 )
 
@@ -164,3 +205,35 @@ def analyzeLog(args: argparse.Namespace, wm: list, sp: la_class.ServerParam, fea
     if not __debug__:
         ks.printSequence(sp, feat, args.output_dir)
         kd.printKickDistribution(sp, feat, args.output_dir)
+
+
+def cycleGet(feat, copyFeatures, cycle, kickList, passList, dribbleList):
+    # Kick
+    if copyFeatures.our_kick[0] != feat.our_kick[0]:
+        kickList.append(cycle)
+    if copyFeatures.our_kick[1] != feat.our_kick[1]:
+        kickList.append(cycle)
+    if copyFeatures.our_kick[2] != feat.our_kick[2]:
+        kickList.append(cycle)
+    if copyFeatures.our_kick[3] != feat.our_kick[3]:
+        kickList.append(cycle)
+
+    # Pass
+    if copyFeatures.our_pass[0] != feat.our_pass[0]:
+        # print(f"Pass0:{copyFeatures.our_pass[0]} != {feat.our_pass[0]}")
+        passList.append(cycle)
+    if copyFeatures.our_pass[1] != feat.our_pass[1]:
+        # print(f"Pass1:{copyFeatures.our_pass[1]} != {feat.our_pass[1]}")
+        passList.append(cycle)
+    if copyFeatures.our_pass[2] != feat.our_pass[2]:
+        # print(f"Pass2:{copyFeatures.our_pass[2]} != {feat.our_pass[2]}")
+        passList.append(cycle)
+    if copyFeatures.our_pass[3] != feat.our_pass[3]:
+        # print(f"Pass3:{copyFeatures.our_pass[3]} != {feat.our_pass[3]}")
+        passList.append(cycle)
+    
+    # Dribble
+    if copyFeatures.our_dribble != feat.our_dribble:
+        # print(f"Dribble:{copyFeatures.our_dribble} != {feat.our_dribble}")
+        dribbleList.append(cycle)
+    
