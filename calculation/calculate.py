@@ -40,6 +40,7 @@ def analyzeLog(filename: str, args: argparse.Namespace, wm: list, sp: la_class.S
     kickList = []
     passList = []
     dribbleList = []
+    goalList = []
     for cycle in range(args.start_cycle, args.end_cycle):
 
         relative_cycle: cython.int = cycle - args.start_cycle
@@ -69,6 +70,7 @@ def analyzeLog(filename: str, args: argparse.Namespace, wm: list, sp: la_class.S
                     print("team l goal!")
                 if feat.target_team == "l":
                     feat.our_point += 1
+                    goalList.append(relative_cycle)
                 elif feat.target_team == "r":
                     feat.opp_point += 1
 
@@ -185,8 +187,9 @@ def analyzeLog(filename: str, args: argparse.Namespace, wm: list, sp: la_class.S
     kickList += [0] * (maxLen - len(kickList))
     passList += [0] * (maxLen - len(passList))
     dribbleList += [0] * (maxLen - len(dribbleList))
+    goalList += [0] * (maxLen - len(goalList))
     #print(f"L:{domListL}\nR:{domListR}")
-    domList = pd.DataFrame({'domL': domListL, 'domR': domListR, 'kickL': kickList, 'passL': passList, 'driibleL': dribbleList})
+    domList = pd.DataFrame({'domL': domListL, 'domR': domListR, 'kickL': kickList, 'passL': passList, 'driibleL': dribbleList, 'goalL': goalList})
     # print(domList)
     print(f"F1:{filename}")
     filename = re.sub(".rcg.*", "", filename)
