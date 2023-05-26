@@ -545,13 +545,14 @@ class Feature:
         csvWriter.writerow(result)
         f.close()
 
-    def outputResult(self, fname) -> None:
+    def outputResult(self, filename, fname) -> None:
         mode: cython.str = 'a' if os.path.exists(fname) else 'w'
         f = open(fname, mode)
 
         csvWriter = csv.writer(f)
 
-        result: list = [self.date,
+        result: list = [filename,
+                        self.date,
                         self.team_point[0],
                         self.team_point[1],
                         self.team_point[2],
