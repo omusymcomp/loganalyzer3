@@ -34,6 +34,10 @@ def parser():
                          type=str,
                          default='./',
                          help="path of the files to be output")
+    parser.add_argument( "--is-feature-cycles",
+                         action="store_true",
+                         default=False,
+                         help="output cycles when feature happened or not")
 
     #print (parser.parse_args())
 

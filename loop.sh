@@ -13,13 +13,14 @@ usage()
 {
 	(echo "Usage: $0 dirname [options]"
 	 echo "Available options:"
-	 echo "  --help           prints this"
-	 echo "  -l|--side l      analyzes left team"
-	 echo "  -r|--side r      analyzes right team"
-	 echo "  --team TEAMNAME  analyzes TEAMNAME team"
-	 echo "  --each-cycle     outputs results for each cycle"
-	 echo "  --start-cycle    sets start cycle"
-	 echo "  --end-cycle      sets end cycle"
+	 echo "  --help           		prints this"
+	 echo "  -l|--side l      		analyzes left team"
+	 echo "  -r|--side r      		analyzes right team"
+	 echo "  --team TEAMNAME  		analyzes TEAMNAME team"
+	 echo "  --each-cycle     		outputs results for each cycle"
+	 echo "  --start-cycle    		sets start cycle"
+	 echo "  --end-cycle            sets end cycle"
+	 echo "  --is-feature-cycles    outputs cycles when feature happened"
 	)
 }
 
@@ -84,6 +85,10 @@ do
 			fi
 			opt="${opt} --end-cycle ${3}"
 			shift 1
+			;;
+
+		--is-feature-cycles)
+			opt="${opt} --is-feature-cycles"
 			;;
 
 	esac

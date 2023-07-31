@@ -2,9 +2,11 @@
 # cython: language_level=3
 
 import os
+import re
 import csv
 import cython
 import itertools
+import pandas as pd
 
 @cython.cclass
 class Position:
@@ -360,6 +362,18 @@ class Feature:
     our_disconnected_player = cython.declare(cython.int, visibility='public')
     opp_disconnected_player = cython.declare(cython.int, visibility='public')
 
+    our_shoot_cycles = cython.declare(list, visibility='public')
+    opp_shoot_cycles = cython.declare(list, visibility='public')
+    our_dominate_cycles = cython.declare(list, visibility='public')
+    opp_dominate_cycles = cython.declare(list, visibility='public')
+    our_kick_cycles = cython.declare(list, visibility='public')
+    our_pass_cycles = cython.declare(list, visibility='public')
+    opp_kick_cycles = cython.declare(list, visibility='public')
+    opp_pass_cycles = cython.declare(list, visibility='public')
+    our_point_cycles = cython.declare(list, visibility='public')
+    opp_point_cycles = cython.declare(list, visibility='public')
+    our_dribble_cycles = cython.declare(list, visibility='public')
+    opp_dribble_cycles = cython.declare(list, visibility='public')
 
     def __init__(self) -> None:
         # team_point = [ the name of target team, the name of opponent team, target team's score, opponent team's score ]
@@ -469,6 +483,19 @@ class Feature:
         self.our_disconnected_player = 0
         self.opp_disconnected_player = 0
 
+        self.our_shoot_cycles = []
+        self.opp_shoot_cycles = []
+        self.our_dominate_cycles = []
+        self.opp_dominate_cycles = []
+        self.our_kick_cycles = []
+        self.opp_kick_cycles = []
+        self.our_pass_cycles = []
+        self.opp_pass_cycles = []
+        self.our_point_cycles = []
+        self.opp_point_cycles = []
+        self.our_dribble_cycles = []
+        self.opp_dribble_cycles = []
+
     def outputIndexForIR(self, fname: str) -> None:
         mode: str = 'a' if os.path.exists(fname) else 'w'
         f = open(fname, mode)
@@ -544,6 +571,42 @@ class Feature:
 
         csvWriter.writerow(result)
         f.close()
+
+    def outputCycles(self, filename, outputDir) -> None:
+        max_len = max(
+            len(self.our_dominate_cycles),
+            len(self.opp_dominate_cycles),
+            len(self.our_kick_cycles),
+            len(self.opp_kick_cycles),
+            len(self.our_pass_cycles),
+            len(self.opp_pass_cycles),
+            len(self.our_dribble_cycles),
+            len(self.opp_dribble_cycles),
+            len(self.our_shoot_cycles),
+            len(self.opp_shoot_cycles),
+            len(self.our_point_cycles),
+            len(self.opp_point_cycles),
+        )
+        df = pd.DataFrame(
+            {
+                'our_dominate_cycles': self.our_dominate_cycles + [0] * (max_len - len(self.our_dominate_cycles)),
+                'opp_dominate_cycles': self.opp_dominate_cycles + [0] * (max_len - len(self.opp_dominate_cycles)),
+                'our_kick_cycles': self.our_kick_cycles + [0] * (max_len - len(self.our_kick_cycles)),
+                'opp_kick_cycles': self.opp_kick_cycles + [0] * (max_len - len(self.opp_kick_cycles)),
+                'our_pass_cycles': self.our_pass_cycles + [0] * (max_len - len(self.our_pass_cycles)),
+                'opp_pass_cycles': self.opp_pass_cycles + [0] * (max_len - len(self.opp_pass_cycles)),
+                'our_dribble_cycles': self.our_dribble_cycles + [0] * (max_len - len(self.our_dribble_cycles)),
+                'opp_dribble_cycles': self.opp_dribble_cycles + [0] * (max_len - len(self.opp_dribble_cycles)),
+                'our_shoot_cycles': self.our_shoot_cycles + [0] * (max_len - len(self.our_shoot_cycles)),
+                'opp_shoot_cycles': self.opp_shoot_cycles + [0] * (max_len - len(self.opp_shoot_cycles)),
+                'our_point_cycles': self.our_point_cycles + [0] * (max_len - len(self.our_point_cycles)),
+                'opp_point_cycles': self.opp_point_cycles + [0] * (max_len - len(self.opp_point_cycles)),
+            }
+        )
+        filename = re.sub(".rcg.*", "", filename)
+        filename = re.sub(".*../", "", filename)
+        outputFile = f"{outputDir}{filename}_cycles.csv"
+        df.to_csv(outputFile, index=None)
 
     def outputResult(self, filename, fname) -> None:
         mode: cython.str = 'a' if os.path.exists(fname) else 'w'

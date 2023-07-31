@@ -17,12 +17,16 @@ def countKick( wm: list, cycle: cython.int, feat: la_class.Feature ) -> str:
 
             if ( direction == "left" ):
                 feat.our_kick[0] += 1
+                feat.our_kick_cycles.append(cycle)
             elif ( direction == "right" ):
                 feat.our_kick[1] += 1
+                feat.our_kick_cycles.append(cycle)
             elif ( direction == "front" ):
                 feat.our_kick[2] += 1
+                feat.our_kick_cycles.append(cycle)
             elif ( direction == "back" ):
                 feat.our_kick[3] += 1
+                feat.our_kick_cycles.append(cycle)
 
         if ( wm[cycle+1].dominate_side == "r" ):
 
@@ -30,12 +34,16 @@ def countKick( wm: list, cycle: cython.int, feat: la_class.Feature ) -> str:
 
             if ( direction == "left" ):
                 feat.opp_kick[0] += 1
+                feat.opp_kick_cycles.append(cycle)
             elif ( direction == "right" ):
                 feat.opp_kick[1] += 1
+                feat.opp_kick_cycles.append(cycle)
             elif ( direction == "front" ):
                 feat.opp_kick[2] += 1
+                feat.opp_kick_cycles.append(cycle)
             elif ( direction == "back" ):
                 feat.opp_kick[3] += 1
+                feat.opp_kick_cycles.append(cycle)
 
     elif ( feat.target_team == "r" ):
         if ( wm[cycle+1].dominate_side == "l" ):
@@ -44,12 +52,16 @@ def countKick( wm: list, cycle: cython.int, feat: la_class.Feature ) -> str:
 
             if ( direction == "left" ):
                 feat.opp_kick[0] += 1
+                feat.opp_kick_cycles.append(cycle)
             elif ( direction == "right" ):
                 feat.opp_kick[1] += 1
+                feat.opp_kick_cycles.append(cycle)
             elif ( direction == "front" ):
                 feat.opp_kick[2] += 1
+                feat.opp_kick_cycles.append(cycle)
             elif ( direction == "back" ):
                 feat.opp_kick[3] += 1
+                feat.opp_kick_cycles.append(cycle)
 
         if ( wm[cycle+1].dominate_side == "r" ):
 
@@ -57,12 +69,16 @@ def countKick( wm: list, cycle: cython.int, feat: la_class.Feature ) -> str:
 
             if ( direction == "left" ):
                 feat.our_kick[0] += 1
+                feat.our_kick_cycles.append(cycle)
             elif ( direction == "right" ):
                 feat.our_kick[1] += 1
+                feat.our_kick_cycles.append(cycle)
             elif ( direction == "front" ):
                 feat.our_kick[2] += 1
+                feat.our_kick_cycles.append(cycle)
             elif ( direction == "back" ):
                 feat.our_kick[3] += 1
+                feat.our_kick_cycles.append(cycle)
 
     return direction
 
@@ -81,6 +97,7 @@ def countPass( wm: list, cycle: cython.int, direction: str, feat: la_class.Featu
                             "to", wm[cycle+1].last_kicker_unum+1, \
                             "received:", wm[cycle+1].last_kicked_cycle )
                 feat.our_pass[0] += 1
+                feat.our_pass_cycles.append(cycle)
             elif ( direction == "right" ):
                 if ( not __debug__ ):
                     print ( "our", wm[cycle].last_kicker_unum+1, \
@@ -88,6 +105,7 @@ def countPass( wm: list, cycle: cython.int, direction: str, feat: la_class.Featu
                             "to", wm[cycle+1].last_kicker_unum+1, \
                             "received:", wm[cycle+1].last_kicked_cycle )
                 feat.our_pass[1] += 1
+                feat.our_pass_cycles.append(cycle)
             elif ( direction == "front" ):
                 if ( not __debug__ ):
                     print ( "our", wm[cycle].last_kicker_unum+1, \
@@ -95,6 +113,7 @@ def countPass( wm: list, cycle: cython.int, direction: str, feat: la_class.Featu
                             "to", wm[cycle+1].last_kicker_unum+1, \
                             "received:", wm[cycle+1].last_kicked_cycle )
                 feat.our_pass[2] += 1
+                feat.our_pass_cycles.append(cycle)
             elif ( direction == "back" ):
                 if ( not __debug__ ):
                     print ( "our", wm[cycle].last_kicker_unum+1, \
@@ -102,6 +121,7 @@ def countPass( wm: list, cycle: cython.int, direction: str, feat: la_class.Featu
                             "to", wm[cycle+1].last_kicker_unum+1, \
                             "received:", wm[cycle+1].last_kicked_cycle )
                 feat.our_pass[3] += 1
+                feat.our_pass_cycles.append(cycle)
 
         else:
             if ( direction == "left" ):
@@ -111,6 +131,7 @@ def countPass( wm: list, cycle: cython.int, direction: str, feat: la_class.Featu
                             "to", wm[cycle+1].last_kicker_unum+1, \
                             "received:", wm[cycle+1].last_kicked_cycle )
                 feat.opp_pass[0] += 1
+                feat.opp_pass_cycles.append(cycle)
             elif ( direction == "right" ):
                 if ( not __debug__ ):
                     print ( "opp", wm[cycle].last_kicker_unum+1, \
@@ -118,6 +139,7 @@ def countPass( wm: list, cycle: cython.int, direction: str, feat: la_class.Featu
                             "to", wm[cycle+1].last_kicker_unum+1, \
                             "received:", wm[cycle+1].last_kicked_cycle )
                 feat.opp_pass[1] += 1
+                feat.opp_pass_cycles.append(cycle)
             elif ( direction == "front" ):
                 if ( not __debug__ ):
                     print ( "opp", wm[cycle].last_kicker_unum+1, \
@@ -125,6 +147,7 @@ def countPass( wm: list, cycle: cython.int, direction: str, feat: la_class.Featu
                             "to", wm[cycle+1].last_kicker_unum+1, \
                             "received:", wm[cycle+1].last_kicked_cycle )
                 feat.opp_pass[2] += 1
+                feat.opp_pass_cycles.append(cycle)
             elif ( direction == "back" ):
                 if ( not __debug__ ):
                     print ( "opp", wm[cycle].last_kicker_unum+1, \
@@ -132,6 +155,7 @@ def countPass( wm: list, cycle: cython.int, direction: str, feat: la_class.Featu
                             "to", wm[cycle+1].last_kicker_unum+1, \
                             "received:", wm[cycle+1].last_kicked_cycle )
                 feat.opp_pass[3] += 1
+                feat.opp_pass_cycles.append(cycle)
 
 
 def getPassRoute( wm: list, cycle:cython.int ) -> str:

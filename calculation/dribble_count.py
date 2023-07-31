@@ -14,9 +14,11 @@ def countDribble( wm: list, cycle: cython.int, feat: la_class.Feature ) -> None:
                     print ("our_dribble",wm[cycle].last_kicker_unum + 1, \
                                "cycle", wm[cycle+1].last_kicked_cycle )
                 feat.our_dribble += 1
+                feat.our_dribble_cycles.append(cycle)
         else:
             if ( gd.isDash( wm, cycle ) ):
                 if ( not __debug__ ):
                     print ("opp_dribble",wm[cycle].last_kicker_unum + 1, \
                                "cycle", wm[cycle+1].last_kicked_cycle )
                 feat.opp_dribble += 1
+                feat.opp_dribble_cycles.append(cycle)
