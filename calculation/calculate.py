@@ -24,7 +24,7 @@ from lib import la_class
 
 def analyzeLog(filename: str, args: argparse.Namespace, wm: list, sp: la_class.ServerParam, feat: la_class.Feature) -> None:
     # write index
-    fname: cython.str = '{}{}.csv'.format(args.output_dir, feat.team_point[0])
+    fname: cython.str = '{}/{}.csv'.format(args.output_dir, feat.team_point[0])
     if not os.path.exists(fname):
         feat.outputIndexForR(fname)
 
@@ -36,7 +36,7 @@ def analyzeLog(filename: str, args: argparse.Namespace, wm: list, sp: la_class.S
 
         # output all information in csv format (ignore extra halves)
         if args.game and cycle != 0 and cycle <= 6000:
-            wm[relative_cycle].outputInfo('{}all_info.csv'.format(args.output_dir))
+            wm[relative_cycle].outputInfo('{}/all_info.csv'.format(args.output_dir))
 
         for say in wm[relative_cycle].referee.say:
             if ("offside" in say
@@ -171,7 +171,7 @@ def analyzeLog(filename: str, args: argparse.Namespace, wm: list, sp: la_class.S
 
         # output for each cycle
         if args.each_cycle:
-            fname_for_integrate_result = '{}{}-{}.csv'.format(args.output_dir, args.start_cycle+1, cycle+1)
+            fname_for_integrate_result = '{}/{}-{}.csv'.format(args.output_dir, args.start_cycle+1, cycle+1)
             if not os.path.exists(fname_for_integrate_result):
                 feat.outputIndexForIR(fname_for_integrate_result)
             feat.outputIntegrateResult(fname_for_integrate_result)
