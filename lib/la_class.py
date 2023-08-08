@@ -605,7 +605,7 @@ class Feature:
         )
         filename = re.sub(".rcg.*", "", filename)
         filename = re.sub(".*../", "", filename)
-        outputFile = f"{outputDir}{filename}_cycles.csv"
+        outputFile = f"{outputDir}/{filename}_cycles.csv"
         df.to_csv(outputFile, index=None)
 
     def outputResult(self, filename, fname) -> None:
