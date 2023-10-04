@@ -384,7 +384,8 @@ class Feature:
         self.logname = ""
         self.target_team = "none"
 
-        self.index = ["date",
+        self.index = ["path",
+                      "date",
                       "our_team",
                       "opp_team",
                       "our_final_team_point",
@@ -512,67 +513,68 @@ class Feature:
         csvWriter.writerow(self.index)
         f.close()
 
-    def outputIntegrateResult(self, fname: str) -> None:
+    def outputIntegrateResult(self, path: str, fname: str) -> None:
         mode: cython.str = 'a' if os.path.exists(fname) else 'w'
         f = open(fname, mode)
 
         csvWriter = csv.writer(f)
 
-        result: list = [self.date,
-                          self.team_point[0],
-                          self.team_point[1],
-                          self.team_point[2],
-                          self.team_point[3],
-                          self.team_point[4],
-                          self.team_point[5],
-                          self.final_result,
-                          self.our_dominate_time,
-                          self.opp_dominate_time,
-                          self.our_possession,
-                          self.opp_possession,
-                          self.our_yellow,
-                          self.opp_yellow,
-                          # sum( self.our_kick ),
-                          # self.our_kick[0],
-                          # self.our_kick[1],
-                          # self.our_kick[2],
-                          # self.our_kick[3],
-                          # sum( self.opp_kick ),
-                          # self.opp_kick[0],
-                          # self.opp_kick[1],
-                          # self.opp_kick[2],
-                          # self.opp_kick[3],
-                          sum(self.our_pass),
-                          self.our_pass[0],
-                          self.our_pass[1],
-                          self.our_pass[2],
-                          self.our_pass[3],
-                          sum(self.opp_pass),
-                          self.opp_pass[0],
-                          self.opp_pass[1],
-                          self.opp_pass[2],
-                          self.opp_pass[3],
-                          self.our_through_pass,
-                          self.opp_through_pass,
-                          self.our_tackle,
-                          self.all_our_tackle - self.our_tackle,
-                          self.opp_tackle,
-                          self.all_opp_tackle - self.opp_tackle,
-                          self.our_shoot,
-                          self.opp_shoot,
-                          self.our_point,
-                          self.opp_point,
-                          self.our_dribble,
-                          self.opp_dribble,
-                          self.our_penalty_area,
-                          self.opp_penalty_area,
-                          self.our_disconnected_player,
-                          self.opp_disconnected_player]
+        result: list = [path,
+                        self.date,
+                        self.team_point[0],
+                        self.team_point[1],
+                        self.team_point[2],
+                        self.team_point[3],
+                        self.team_point[4],
+                        self.team_point[5],
+                        self.final_result,
+                        self.our_dominate_time,
+                        self.opp_dominate_time,
+                        self.our_possession,
+                        self.opp_possession,
+                        self.our_yellow,
+                        self.opp_yellow,
+                        # sum( self.our_kick ),
+                        # self.our_kick[0],
+                        # self.our_kick[1],
+                        # self.our_kick[2],
+                        # self.our_kick[3],
+                        # sum( self.opp_kick ),
+                        # self.opp_kick[0],
+                        # self.opp_kick[1],
+                        # self.opp_kick[2],
+                        # self.opp_kick[3],
+                        sum(self.our_pass),
+                        self.our_pass[0],
+                        self.our_pass[1],
+                        self.our_pass[2],
+                        self.our_pass[3],
+                        sum(self.opp_pass),
+                        self.opp_pass[0],
+                        self.opp_pass[1],
+                        self.opp_pass[2],
+                        self.opp_pass[3],
+                        self.our_through_pass,
+                        self.opp_through_pass,
+                        self.our_tackle,
+                        self.all_our_tackle - self.our_tackle,
+                        self.opp_tackle,
+                        self.all_opp_tackle - self.opp_tackle,
+                        self.our_shoot,
+                        self.opp_shoot,
+                        self.our_point,
+                        self.opp_point,
+                        self.our_dribble,
+                        self.opp_dribble,
+                        self.our_penalty_area,
+                        self.opp_penalty_area,
+                        self.our_disconnected_player,
+                        self.opp_disconnected_player]
 
         csvWriter.writerow(result)
         f.close()
 
-    def outputCycles(self, filename, outputDir) -> None:
+    def outputCycles(self, path: str, outputDir: str) -> None:
         max_len = max(
             len(self.our_dominate_cycles),
             len(self.opp_dominate_cycles),
@@ -603,18 +605,18 @@ class Feature:
                 'opp_point_cycles': self.opp_point_cycles + [0] * (max_len - len(self.opp_point_cycles)),
             }
         )
-        filename = re.sub(".rcg.*", "", filename)
-        filename = re.sub(".*../", "", filename)
-        outputFile = f"{outputDir}/{filename}_cycles.csv"
+        game_name = re.sub(".rcg.*", "", path)
+        game_name = re.sub(".*../", "", game_name)
+        outputFile = f"{outputDir}/{game_name}_cycles.csv"
         df.to_csv(outputFile, index=None)
 
-    def outputResult(self, filename, fname) -> None:
+    def outputResult(self, path, fname) -> None:
         mode: cython.str = 'a' if os.path.exists(fname) else 'w'
         f = open(fname, mode)
 
         csvWriter = csv.writer(f)
 
-        result: list = [filename,
+        result: list = [path,
                         self.date,
                         self.team_point[0],
                         self.team_point[1],

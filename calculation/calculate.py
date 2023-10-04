@@ -174,7 +174,7 @@ def analyzeLog(filename: str, args: argparse.Namespace, wm: list, sp: la_class.S
             fname_for_integrate_result = '{}/{}-{}.csv'.format(args.output_dir, args.start_cycle+1, cycle+1)
             if not os.path.exists(fname_for_integrate_result):
                 feat.outputIndexForIR(fname_for_integrate_result)
-            feat.outputIntegrateResult(fname_for_integrate_result)
+            feat.outputIntegrateResult(filename, fname_for_integrate_result)
 
     if args.is_feature_cycles:
         feat.outputCycles( filename, args.output_dir )
