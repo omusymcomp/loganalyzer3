@@ -14,6 +14,8 @@ def getInitialPosition( line: str, wm: la_class.WorldModel ) -> None:
     if ( "(move" in line ):
         move_teamname: cython.str = line.split()[2].rsplit( "_", 1 )[0]
         # move_cycle: cython.int = int( line.split()[0].split( "," )[0] )
+        if("Coach: (move" in line):
+            return
         move_player: cython.int = int( line.split()[2].rsplit( "_", 1 )[1].strip( ":" ) )
 
         for i in range( len( line.split() ) ):
@@ -36,6 +38,8 @@ def getInitialPosition( line: str, wm: la_class.WorldModel ) -> None:
 
 def getAction( line: str, wm: la_class.WorldModel ) -> None:
 
+    if("Recv Coach:" in line):
+        return
     teamname: cython.str = line.split()[2].rsplit( "_", 1 )[0]
     unum: cython.int = int( line.split()[2].rsplit( "_", 1 )[1].strip( ":" ) )
 
